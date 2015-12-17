@@ -78,7 +78,7 @@ def main():
     files = listFiles(input_path)
 
     for html_file in files:
-        [names, summary] = parseHtml(os.path.join(input_path, html_file))
+        [names, summary] = parseHtml(html_file)
 
         with open(out_file, "a") as fp:
             for k, v in names.iteritems():
@@ -96,5 +96,5 @@ def main():
 
 # MAIN FILE
 
-if __name__ = '__main__':
+if __name__ == '__main__':
     main()
