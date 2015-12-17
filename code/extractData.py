@@ -40,6 +40,7 @@ def extractSummary(soup):
 def extractName(soup):
     names = {}
     full_name = soup.find(name='span', class_='full-name')
+    #print full_name
     if full_name:
         temp = ''
         for string in full_name.stripped_strings:
@@ -54,7 +55,7 @@ def parseHtml(html):
     with open(html) as f:
         s = str(f.readlines())
         new_s = UnicodeDammit.detwingle(s)
-        new_s = new_s.decode("utf-8")
+        new_s = new_s.decode('utf-8', 'ignore')
         soup = BeautifulSoup(new_s, 'html.parser')
         names = extractName(soup)
         summary = extractSummary(soup)
@@ -63,7 +64,7 @@ def parseHtml(html):
 
 def listFiles(path):
     '''
-    returns a list of names (with extension, without full path) of all files in folder path
+    returns a list of names (with full path) of all files in folder path
     '''
     files = []
     for name in os.listdir(path):
@@ -80,21 +81,25 @@ def main():
     for html_file in files:
         [names, summary] = parseHtml(html_file)
 
+        # output a line that includes all the extracted data for a profile
         with open(out_file, "a") as fp:
             for k, v in names.iteritems():
-                fp.write(k)
-                fp.write("|")
+                v = v.encode('utf-8')
                 fp.write(v)
                 fp.write("||")
             for k1,v1 in summary.iteritems():
-                v1 = v1.encode("utf-8")
-                fp.write(k1)
-                fp.write("|")
+                v1 = v1.encode('utf-8')
                 fp.write(v1)
-                fp.write("\n")
+                fp.write("||")
+            fp.write(html_file)
+            fp.write("\n")
 
 
 # MAIN FILE
 
 if __name__ == '__main__':
+    error_message = "Usage: python extractData.py <input_path> <output_file>\n"
+    if len(sys.argv) != 3:
+        print error_message
+        exit()
     main()

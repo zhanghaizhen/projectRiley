@@ -49,4 +49,8 @@ def main():
 
 
 if __name__ == '__main__':
+    error_message = "Usage: python create_sample_files.py <input_dir> <output_dir> <num_samples>\n"
+    if len(sys.argv) != 4:
+        print error_message
+        exit()
     main()
