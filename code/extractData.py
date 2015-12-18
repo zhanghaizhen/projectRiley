@@ -1,5 +1,5 @@
 # Extract Name, Summary, Education
-
+#from __future__ import unicode_literals
 from bs4 import BeautifulSoup
 from bs4 import UnicodeDammit
 from collections import defaultdict
@@ -7,6 +7,8 @@ import os
 import sys
 import pdb
 import re
+import string
+
 
 kGhostUrl = "https://static.licdn.com/scds/common/u/images/themes/katy/ghosts/person/ghost_person_50x50_v1.png"
 def extractPicture(soup):
@@ -34,18 +36,27 @@ def extractSummary(soup):
             summaries_dict["summary"] = summary_f
     else:
         summaries_dict["summary"] = "Missing"
+    summaries_dict["summary"] = cleanSummaries(summaries_dict["summary"])
     return summaries_dict
 
 
 def extractName(soup):
     names = {}
     full_name = soup.find(name='span', class_='full-name')
-    #print full_name
+    # print "full name:{0}".format(full_name)
+    # print "full_name_string:{0}".format(full_name.string)
+    # print ('OUTPUT 1: Enik\xc3\xb6 Larisa Kocsis').decode('utf-8')
+    # print full_name.string.decode('utf-8')
     if full_name:
-        temp = ''
+        #temp = ''
         for string in full_name.stripped_strings:
-            temp = temp + string
-            names["full_name"] = temp
+            #print string
+            #temp = temp + string
+            # Punting on Unicode for now; Need to come back to fixing this
+            if "\\x" in string:
+                names["full_name"] = "Unicode"
+            else:
+                names["full_name"] = string
     else:
         names["full_name"] = "Missing"
     return names
@@ -54,12 +65,47 @@ def extractName(soup):
 def parseHtml(html):
     with open(html) as f:
         s = str(f.readlines())
-        new_s = UnicodeDammit.detwingle(s)
-        new_s = new_s.decode('utf-8', 'ignore')
-        soup = BeautifulSoup(new_s, 'html.parser')
+        #new_s = UnicodeDammit.detwingle(s)
+        #new_s = new_s.decode('utf-8', 'ignore')
+        soup = BeautifulSoup(s, 'html.parser', from_encoding='utf-8')
+        #print soup.original_encoding
+        #print soup.prettify('utf-8')
         names = extractName(soup)
         summary = extractSummary(soup)
     return names, summary
+
+def cleanSummaries(summary):
+    '''
+    Returns text stripped of tabs, newlines, funky characters
+    '''
+    # convert to lower case and remove tabs and newlines
+    summary = summary.lower()
+    summary = summary.replace('\\t', ' ')
+    summary = summary.replace('\\n', ' ')
+
+    # Strip everything except letters, numbers and spaces
+    pattern = re.compile('([^\s\w]|_)+')
+    summary = pattern.sub('', summary)
+
+    return summary
+
+def cleanNames(fname):
+
+    fname = fname.lower()
+
+    # Strip Prof. Dr.
+    fname = fname.replace('prof.', "")
+    fname = fname.replace('dr.',"")
+
+    # Only keep letters, numbers and
+    pattern = re.compile('([^\s\w]|_)+')
+    fname = pattern.sub('', fname)
+
+    # TO DO: Replace real bad ones explicitly
+
+    # If first name is an initial, set first name to be "INI-ONLY". will go into first_name generator
+
+    return fname
 
 
 def listFiles(path):
