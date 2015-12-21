@@ -43,40 +43,43 @@ def extractSummary(soup):
 def extractName(soup):
     names = {}
     full_name = soup.find(name='span', class_='full-name')
-    # print "full name:{0}".format(full_name)
-    # print "full_name_string:{0}".format(full_name.string)
-    # print ('OUTPUT 1: Enik\xc3\xb6 Larisa Kocsis').decode('utf-8')
-    # print full_name.string.decode('utf-8')
+    #print full_name
+
+    #print ":".join("{:02x}".format(ord(c)) for c in full_name)
+    #print ":".join("{:02x}".format(ord(c)) for c in 'Enik\xc3\xb6 Larisa Kocsis')
+
     if full_name:
-        #temp = ''
-        for string in full_name.stripped_strings:
-            #print string
-            #temp = temp + string
-            # Punting on Unicode for now; Need to come back to fixing this
-            if "\\x" in string:
-                names["full_name"] = "Unicode"
-            else:
-                names["full_name"] = string
+        names["full_name"] = full_name.string
     else:
-        names["full_name"] = "Missing"
+        names["full_name"] = "missing"
+    names["full_name"] = cleanNames(names["full_name"])
     return names
 
 
 def parseHtml(html):
     with open(html) as f:
-        s = str(f.readlines())
-        #new_s = UnicodeDammit.detwingle(s)
-        #new_s = new_s.decode('utf-8', 'ignore')
-        soup = BeautifulSoup(s, 'html.parser', from_encoding='utf-8')
+        soup = BeautifulSoup(f, 'html.parser')
         #print soup.original_encoding
-        #print soup.prettify('utf-8')
         names = extractName(soup)
         summary = extractSummary(soup)
+
+    # with open(html) as f:
+    #     s = str(f.readlines().decode('string-escape').decode("utf-8"))
+    #     #new_s = UnicodeDammit.detwingle(s)
+    #     #new_s = new_s.decode('latin-1', 'ignore')
+    #     soup = BeautifulSoup(s)
+    #
+    #     print soup.original_encoding
+    #     #print soup.prettify('utf-8')
+    #     names = extractName(soup)
+    #     summary = extractSummary(soup)
     return names, summary
+
 
 def cleanSummaries(summary):
     '''
-    Returns text stripped of tabs, newlines, funky characters
+    Returns text stripped of tabs, newlines, funky characters - this will remove anything that is not regular ascii.
+    TO DO: need to put back the rest of the world
     '''
     # convert to lower case and remove tabs and newlines
     summary = summary.lower()
@@ -89,23 +92,37 @@ def cleanSummaries(summary):
 
     return summary
 
+
 def cleanNames(fname):
+    #import pdb; pdb.set_trace()
 
-    fname = fname.lower()
+    if isBlank(fname):
+        fname = "unicode-only"
+    else:
+        # Strip Prof. Dr.
+        fname = fname.lower()
+        print fname
+        fname = fname.replace('prof.', "")
+        fname = fname.replace('dr.',"")
 
-    # Strip Prof. Dr.
-    fname = fname.replace('prof.', "")
-    fname = fname.replace('dr.',"")
+        # Only keep letters, numbers and
+        pattern = re.compile('([^\s\w]|_)+')
+        fname = pattern.sub('', fname)
 
-    # Only keep letters, numbers and
-    pattern = re.compile('([^\s\w]|_)+')
-    fname = pattern.sub('', fname)
+        # TO DO: Replace real bad ones explicitly
 
-    # TO DO: Replace real bad ones explicitly
+        # If first name is an initial, set first name to be "INI-ONLY". will go into first_name generator
 
-    # If first name is an initial, set first name to be "INI-ONLY". will go into first_name generator
+        # names with only non-ascii characters are causing issues.
 
     return fname
+
+def isBlank (myString):
+    if myString and myString.strip():
+        #myString is not None AND myString is not empty or blank
+        return False
+    #myString is None OR myString is empty or blank
+    return True
 
 
 def listFiles(path):

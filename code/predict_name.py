@@ -1,6 +1,17 @@
 import nltk
 
 
+def gender_features(word):
+    '''
+    Returns the following features given a word:
+    - name
+    - last letter
+    - last 2 letters
+    - boolean if last letter is vowel
+    '''
+    return {'name': word, 'last_letter': word[-1], 'last_2_letters': word[-2:], 'last_is_vowel': (word[-1] in 'aeiou')}
+
+
 def gender_classifier(first_name):
     # 7944 labeled names from nltk corpus
     labeled_names = ([(name, 'male') for name in names.words('male.txt')] +[(name, 'female') for name in names.words('female.txt')])
