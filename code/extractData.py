@@ -104,6 +104,7 @@ def cleanNames(fname):
         print fname
         fname = fname.replace('prof.', "")
         fname = fname.replace('dr.',"")
+        fname = fname.replace('dr',"")
 
         # Only keep letters, numbers and
         pattern = re.compile('([^\s\w]|_)+')
@@ -117,11 +118,11 @@ def cleanNames(fname):
 
     return fname
 
-def isBlank (myString):
-    if myString and myString.strip():
-        #myString is not None AND myString is not empty or blank
+def isBlank(mystr):
+    if mystr and mystr.strip():
+        #mystr is not None AND mystr is not empty or blank
         return False
-    #myString is None OR myString is empty or blank
+    #mystr is None OR mystr is empty or blank
     return True
 
 
