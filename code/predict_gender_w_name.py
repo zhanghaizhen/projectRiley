@@ -35,5 +35,3 @@ def main():
 
 if __name__=='__main__':
     main()
-
-df['gender'] = df['first_name'].apply(lambda x: gender_classifier(x))

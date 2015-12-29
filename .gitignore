@@ -1,4 +1,5 @@
 /data
+/do_not_commit
 *.pyc
 .idea
 .ipynb_checkpoints
