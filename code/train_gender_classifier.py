@@ -14,20 +14,21 @@ def gender_features(word):
 
 
 def gender_train():
-    # 7944 labeled names from nltk corpus
+    '''
+    Trains gender data based on the labeled names corpus from nltk; 7944 labeled names
+    '''
     labeled_names = ([(name, 'male') for name in names.words('male.txt')] +[(name, 'female') for name in names.words('female.txt')])
 
     # nltk's NaiveBayesClassifier takes featuresets to train that is a tuple of (features_dict, label)
     featuresets_train = [(gender_features(name), gender) for (name, gender) in labeled_names]
     classifier = nltk.NaiveBayesClassifier.train(featuresets_train)
-
     return classifier
 
 
 def main():
-    out_file = '/Users/lekha/galvanize/capstone/projectRiley/code/gender.pkl'
+    out_file = '/Users/lekha/galvanize/capstone/projectRiley/models/gender.pkl'
     classifier = gender_train()
-    with open('gender.pkl', 'w') as f:
+    with open(out_file, 'w') as f:
         pickle.dump(classifier, f)
 
 
