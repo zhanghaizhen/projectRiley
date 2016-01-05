@@ -78,7 +78,7 @@ def load_model(input_file):
         classifier = pickle.load(f)
     return classifier
 
-if __name__=='__main__':
+def main():
     input_file = sys.argv[1]
     output_file = sys.argv[2]
     males, females, commons = get_gender_sets()
@@ -104,3 +104,12 @@ if __name__=='__main__':
 
     # Print the final DF out to a text file
     df.to_csv(output_file, sep="|", index=False)
+
+
+if __name__=='__main__':
+    error_msg = "Usage:python predict_gender_w_name.py <input_file> <output_file>\n"
+    if len(sys.argv) != 3:
+        print (error_msg)
+        exit()
+
+    main()

@@ -72,6 +72,12 @@ def main():
     infile = sys.argv[1]
     outfile = sys.argv[2]
     df = pd.read_csv(infile, sep="|")
+
+    # Get rid of rows with nans if they number less than 5
+    null_inds = df[df.isnull().any(axis=1)].index
+    if len(null_inds) < 5:
+        df = df.drop(df.index[[null_inds]])
+
     df = get_location(df)
 
     df.to_csv(outfile, sep='|', index=False)

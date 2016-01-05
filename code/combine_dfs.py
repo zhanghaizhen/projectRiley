@@ -9,11 +9,13 @@ import pandas as pd
 # '/Users/lekha/galvanize/capstone/projectRiley/data/withfirstname/withfirstname_gatech.txt',
 #  '/Users/lekha/galvanize/capstone/projectRiley/data/withfirstname/withfirstname_huskies.txt']
 
-file_list = ['/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_holyoke.txt', '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_utaustin.txt', '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_vassar.txt', '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_wellesley.txt', '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_caltech.txt', '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_gatech.txt', '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_huskies.txt']
+# file_list = ['/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_holyoke.txt', '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_utaustin.txt', '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_vassar.txt', '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_wellesley.txt', '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_caltech.txt', '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_gatech.txt', '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_huskies.txt']
+
+file_list = ['/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_hadoop20150109.txt',  '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_hadoop20150322.txt', '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_hadoop20150323.txt']
 
 #outfile = '/Users/lekha/galvanize/capstone/projectRiley/data/withfirstname/withfirstname_all.txt'
 
-outfile = '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_all.txt'
+outfile = '/Users/lekha/galvanize/capstone/projectRiley/data/withgender/withgender_hadoop_all.txt'
 
 def combine_dfs(infile_list):
     cnt = 0

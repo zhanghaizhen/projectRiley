@@ -1,5 +1,5 @@
 #!/bin/bash
-dir="/Users/lekha/galvanize/capstone/projectRiley/data/hadoopdata/2015-01-09/histories"
+dir="/Users/lekha/galvanize/capstone/projectRiley/data/hadoopdata/2015-03-23/histories"
 i=0
 for filename in $dir/*.gz; do
     i=$((i+1))

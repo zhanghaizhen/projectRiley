@@ -298,6 +298,16 @@ def parseHtml2(html):
     return names, summary, title, industry, location
 
 
+def check_file_valid(html):
+    with open(html) as f:
+        soup = BeautifulSoup(f, 'html.parser')
+        name = soup.find(name='span', class_='full-name')
+        if name is None:
+            return False
+        else:
+            return True
+
+
 def cleanSummaries(summary):
     '''
     Returns text stripped of tabs, newlines, funky characters - this will remove anything that is not regular ascii.
@@ -335,6 +345,7 @@ def cleanNames(fname):
 
     return fname
 
+
 def isBlank(mystr):
     if mystr and mystr.strip():
         #mystr is not None AND mystr is not empty or blank
@@ -362,8 +373,10 @@ def main():
 
     for html_file in files:
         if (file_type == '1'):
-            #print ("old")
-            [names, summary, title, industry, location] = parseHtml1(html_file)
+            if (check_file_valid(html_file)):
+                [names, summary, title, industry, location] = parseHtml1(html_file)
+            else:
+                continue
         else:
             [names, summary, title, industry, location] = parseHtml2(html_file)
 
