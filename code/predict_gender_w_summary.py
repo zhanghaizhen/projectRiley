@@ -2,18 +2,12 @@ from __future__ import division, print_function
 import pandas as pd
 import numpy as np
 from collections import defaultdict
-from sklearn.linear_model import LogisticRegression
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.grid_search import GridSearchCV
 from sklearn.cross_validation import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, TfidfTransformer
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score, roc_curve, auc
-from sklearn import cross_validation
-from sklearn.pipeline import Pipeline
 import nltk
 from nltk.stem.snowball import SnowballStemmer
-from nltk.stem.porter import *
 from nltk import word_tokenize
 import re
 from nltk.corpus import stopwords
@@ -98,7 +92,7 @@ def preprocess_df(df):
     return df
 
 
-def model_predict(df):
+def model_predict(df, model):
 # Train-test split
 
     X_train, X_test, y_train, y_test = train_test_split(df['summary'], df['class'], test_size=0.3, random_state=0)
@@ -109,41 +103,37 @@ def model_predict(df):
 
     print ("Training the model...")
 
-
-
-    # Initialize a Random Forest classifier with 100 trees
-    forest = RandomForestClassifier(n_estimators = 100)
-
-    # Fit the forest to the training set, using the bag of words as
-    # features and the sentiment labels as the response variable
-    #
-    # This may take a few minutes to run
-    forest = forest.fit(train_fit, y_train)
+    model = model.fit(train_fit, y_train)
 
     # Testing
-
     # Get a bag of words for the test set, and convert to a numpy array
-    #test_data_features = vectorizer.transform(X_test)
     test_features = vectorizer.transform(X_test)
     test_features = test_features.toarray()
 
     # Use the random forest to make sentiment label predictions
-    yhat = forest.predict(test_features)
-    probX = forest.predict_proba(test_features)
+    yhat = model.predict(test_features)
+    probX = model.predict_proba(test_features)
 
-    print ("Precision Score: {0}".format(precision_score(y_test, yhat)))
-    print ("Recall Score: {0}".format(recall_score(y_test, yhat)))
-    print ("AUC Score: {0}".format(roc_auc_score(y_test, yhat)))
-    print ("Model Score:{0}".format(forest.score(test_features, y_test)))
+    print "Done! Accuracy Metrics below:\n"
+    print ("Precision Score/Positive Predictive Value/TP|TP+FP: {:.2%}".format(precision_score(y_test, yhat)))
+    print ("Recall Score/Sensitivity/TPR/TP|P: {:.2%}".format(recall_score(y_test, yhat)))
+    print ("AUC Score: {:.2%}".format(roc_auc_score(y_test, yhat)))
+    print ("Model Score:Accuracy: TP+TN|P+N: {:.2%}".format(model.score(test_features, y_test)))
 
     fpr, tpr, thresholds = roc_curve(y_test, probX[:,1])
 
+    return model
+
 
 def main():
+    '''
+    Predicts the gender, given an input file in the format that is at: /Users/lekha/galvanize/capstone/projectRiley/data/withindgroup/all2.txt
+    '''
     infile = sys.argv[1]
     df = pd.read_csv(infile, sep="|")
     df = preprocess_df(df)
-    model_predict(df)
+    model = RandomForestClassifier(n_estimators = 100)
+    model = model_predict(df, model)
 
 
 if __name__ == '__main__':
